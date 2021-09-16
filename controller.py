@@ -125,6 +125,8 @@ def edit(task_id):
         }
 
     token_str = request.form.get('token')
+    username = request.form.get('username')
+    email = request.form.get('email')
     text = request.form.get('text')
     status = request.form.get('status')
 
@@ -132,7 +134,12 @@ def edit(task_id):
 
     if response["status"] == "error":
         return response
+        
+    response = validate_task(username, email, text)
 
+    if response["status"] == "error":
+        return response
+    
     response = validate_status(status)
 
     if response["status"] == "error":
@@ -140,6 +147,11 @@ def edit(task_id):
 
     if status != None:
         status = int(status)
+
+    response = check_username(username)
+
+    if response["status"] == "error":
+        return response
 
     try: 
         task = Task.get_by_id(task_id)
@@ -164,8 +176,9 @@ def edit(task_id):
     elif status != None:
         task.status = status
         
-    if text != None:
-        task.text = text
+    task.username = username
+    task.email = email
+    task.text = text
 
     task.save()
 
