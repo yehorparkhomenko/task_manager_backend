@@ -151,22 +151,22 @@ def edit(task_id):
             }
         }
 
-    if text != None:
-        task.text = text
-
-    if status != None and is_admin(token_str):
+    if status != None and is_admin(token_str) and task.text != text:
         if status == 0:
            task.status = 1
         elif status == 10:
             task.status = 11
-    elif status == None and is_admin(token_str):
+    elif status == None and is_admin(token_str) and task.text != text:
         if task.status == 0:
             task.status = 1
         elif status == 10:
             task.status = 11
     elif status != None:
         task.status = status
-    
+        
+    if text != None:
+        task.text = text
+
     task.save()
 
     return {
